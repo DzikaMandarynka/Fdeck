@@ -35,7 +35,7 @@ actions:
 
 pub fn add_group(group_name: Option<&String>) -> Result<()> {
     let group_created: bool;
-    let group_name = group_name.ok_or(ActionError::invalid_param())?;
+    let group_name = group_name.ok_or(ActionError::missing_param())?;
 
     if !is_save_present() {
         create_save().map_err(|e| ActionError::create_dir(&paths::get_save_path(), e))?;
