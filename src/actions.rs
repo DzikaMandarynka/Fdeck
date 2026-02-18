@@ -1,6 +1,6 @@
 use std::{
-    fs::{self, OpenOptions},
-    io::{self, Read, Write},
+    fs::{self},
+    io::{self},
     path::Path,
     result,
 };

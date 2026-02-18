@@ -1,8 +1,6 @@
 use fdesk::actions;
 use fdesk::errors::{ActionError, ActionErrorKind};
 use std::env;
-use std::error::Error;
-use std::os::unix::io;
 
 fn main() {
     let mut args = env::args();
@@ -19,8 +17,8 @@ fn main() {
 
     let action = &args[0];
     let param1 = args.get(1);
-    let param2 = args.get(2);
-    let param3 = args.get(3);
+    let _param2 = args.get(2);
+    let _param3 = args.get(3);
 
     #[cfg(debug_assertions)]
     {
