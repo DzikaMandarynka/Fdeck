@@ -5,8 +5,10 @@ type IOError = io::Error;
 pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
+    ReadInput(IOError),
     OpenFile(String, IOError),
     CreateDirectory(String, IOError),
+    OverwriteDirectory(String, IOError),
 }
 
 #[derive(Debug)]
@@ -33,6 +35,11 @@ impl ActionError {
             kind: ActionErrorKind::MissingParams,
         }
     }
+    pub fn read_input(io_err: IOError) -> Self {
+        ActionError {
+            kind: ActionErrorKind::ReadInput(io_err),
+        }
+    }
     pub fn file_read(file_name: &str, io_err: IOError) -> Self {
         ActionError {
             kind: ActionErrorKind::OpenFile(file_name.to_string(), io_err),
@@ -41,6 +48,11 @@ impl ActionError {
     pub fn create_dir(dir_name: &str, io_err: IOError) -> Self {
         ActionError {
             kind: ActionErrorKind::CreateDirectory(dir_name.to_string(), io_err),
+        }
+    }
+    pub fn overwrite_dir(dir_name: &str, io_err: IOError) -> Self {
+        ActionError {
+            kind: ActionErrorKind::OverwriteDirectory(dir_name.to_string(), io_err),
         }
     }
     pub fn kind(&self) -> &ActionErrorKind {

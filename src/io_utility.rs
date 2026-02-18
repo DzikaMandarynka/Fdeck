@@ -8,3 +8,10 @@ pub fn is_save_present() -> bool {
 pub fn create_save() -> Result<(), Error> {
     fs::create_dir(SAVE_DIRECTORY)
 }
+
+pub fn overwrite_dir(path: &Path) -> Result<(), Error> {
+    if path.exists() {
+        fs::remove_dir_all(path)?;
+    }
+    fs::create_dir(path)
+}

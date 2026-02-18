@@ -2,6 +2,7 @@ use fdesk::actions;
 use fdesk::errors::{ActionError, ActionErrorKind};
 use std::env;
 use std::error::Error;
+use std::os::unix::io;
 
 fn main() {
     let mut args = env::args();
@@ -28,12 +29,19 @@ fn main() {
         let e = match e.kind() {
             ActionErrorKind::InvalidParams => "Invalid Parameters were inputed into an action",
             ActionErrorKind::MissingParams => "Some essential parameters were missing",
+            ActionErrorKind::ReadInput(io_err) => {
+                &format!("Couldn't read user input because [io error: {}]", io_err)
+            }
             ActionErrorKind::OpenFile(file, io_err) => &format!(
                 "Couldn't open a file [file: {}] because [io error: {}]",
                 file, io_err
             ),
             ActionErrorKind::CreateDirectory(dir, io_err) => &format!(
                 "Couldn't create a directory [dir: {}] because [io error: {}]",
+                dir, io_err
+            ),
+            ActionErrorKind::OverwriteDirectory(dir, io_err) => &format!(
+                "Couldn't overwrite a directory [dir: {}] because [io error: {}]",
                 dir, io_err
             ),
         };
