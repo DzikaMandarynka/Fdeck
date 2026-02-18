@@ -36,7 +36,7 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
         .append(true)
         .create(true)
         .open(file_name)
-        .map_err(|_| ActionError::file_read(file_name))?;
+        .map_err(|e| ActionError::file_read(file_name, e))?;
 
     file.write_all((format!("\n{}", group_name)).as_bytes())
         .unwrap();

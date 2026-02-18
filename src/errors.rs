@@ -1,10 +1,11 @@
-use std::{error::Error, fmt::Display};
+use std::{error::Error, fmt::Display, io};
+type IOError = io::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
-    OpenFile(String),
+    OpenFile(String, IOError),
 }
 
 #[derive(Debug)]
@@ -31,9 +32,9 @@ impl ActionError {
             kind: ActionErrorKind::MissingParams,
         }
     }
-    pub fn file_read(file_name: &str) -> Self {
+    pub fn file_read(file_name: &str, io_err: IOError) -> Self {
         ActionError {
-            kind: ActionErrorKind::OpenFile(file_name.to_string()),
+            kind: ActionErrorKind::OpenFile(file_name.to_string(), io_err),
         }
     }
     pub fn kind(&self) -> &ActionErrorKind {

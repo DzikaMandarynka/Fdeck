@@ -28,7 +28,10 @@ fn main() {
         let e = match e.kind() {
             ActionErrorKind::InvalidParams => "Invalid Parameters were inputed into an action",
             ActionErrorKind::MissingParams => "Some essential parameters were missing",
-            ActionErrorKind::OpenFile(file) => &format!("Couldn't open a file [file: {}]", file),
+            ActionErrorKind::OpenFile(file, io_err) => &format!(
+                "Couldn't open a file [file: {}] because [io error: {}]",
+                file, io_err
+            ),
         };
         println!("Error: {e}");
     }
