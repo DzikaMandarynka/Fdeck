@@ -13,17 +13,17 @@ pub fn help() {
         "
 [flash-deck]
 syntax:
-    f-deck [action] (params)
-    [] -> needed
-    () -> optional
+    f-deck <action> [params]
+    <> -> needed
+    [] -> optional
 actions:
     help: display this screen
     add_card: add a flash card
-        params: [card_name] [card_question] [card_answer] [card_group]
+        params: <card_name> <card_question> <card_answer> <card_group>
     add_group: add a flash group
-        params: [group_name]
+        params: <group_name>
     review: review flash cards from a group
-        params: [group_name]
+        params: <group_name>
         "
     )
 }
