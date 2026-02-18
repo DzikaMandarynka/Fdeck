@@ -6,9 +6,9 @@ use std::{
 };
 
 use crate::{
-    constants::SAVE_DIRECTORY,
     errors::ActionError,
     io_utility::{self, create_save, is_save_present},
+    paths,
 };
 
 type Result<T> = result::Result<T, ActionError>;
@@ -38,10 +38,10 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
     let group_name = group_name.ok_or(ActionError::invalid_param())?;
 
     if !is_save_present() {
-        create_save().map_err(|e| ActionError::create_dir(SAVE_DIRECTORY, e))?;
+        create_save().map_err(|e| ActionError::create_dir(&paths::get_save_path(), e))?;
     }
 
-    let dir_path = format!("{}{}", SAVE_DIRECTORY, group_name);
+    let dir_path = format!("{}{}", paths::get_save_path(), group_name);
 
     if Path::new(&dir_path).exists() {
         println!(

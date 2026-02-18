@@ -23,7 +23,11 @@ fn main() {
     let param3 = args.get(3);
 
     #[cfg(debug_assertions)]
-    println!("Input action: {}", action);
+    {
+        use fdesk::paths;
+        println!("Save directory: {}", paths::get_save_path());
+        println!("Input action: {}", action);
+    }
 
     if let Err(e) = exec_action(action, param1) {
         let e = match e.kind() {
