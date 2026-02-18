@@ -6,6 +6,7 @@ pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
     OpenFile(String, IOError),
+    CreateDirectory(String, IOError),
 }
 
 #[derive(Debug)]
@@ -35,6 +36,11 @@ impl ActionError {
     pub fn file_read(file_name: &str, io_err: IOError) -> Self {
         ActionError {
             kind: ActionErrorKind::OpenFile(file_name.to_string(), io_err),
+        }
+    }
+    pub fn create_dir(dir_name: &str, io_err: IOError) -> Self {
+        ActionError {
+            kind: ActionErrorKind::CreateDirectory(dir_name.to_string(), io_err),
         }
     }
     pub fn kind(&self) -> &ActionErrorKind {

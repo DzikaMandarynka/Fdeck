@@ -32,6 +32,10 @@ fn main() {
                 "Couldn't open a file [file: {}] because [io error: {}]",
                 file, io_err
             ),
+            ActionErrorKind::CreateDirectory(dir, io_err) => &format!(
+                "Couldn't create a directory [dir: {}] because [io error: {}]",
+                dir, io_err
+            ),
         };
         eprintln!("Error: {e}");
     }
