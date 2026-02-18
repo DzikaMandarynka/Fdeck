@@ -33,7 +33,7 @@ fn main() {
                 file, io_err
             ),
         };
-        println!("Error: {e}");
+        eprintln!("Error: {e}");
     }
 }
 
