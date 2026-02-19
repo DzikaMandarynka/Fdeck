@@ -1,5 +1,9 @@
 use crate::paths;
-use std::{fs, io::Error, path::Path};
+use std::{
+    fs,
+    io::{self, Error},
+    path::Path,
+};
 
 pub fn is_save_present() -> bool {
     Path::new(&paths::get_save_path()).exists()
@@ -7,6 +11,16 @@ pub fn is_save_present() -> bool {
 
 pub fn create_save() -> Result<(), Error> {
     fs::create_dir(&paths::get_save_path())
+}
+
+pub fn request_input() -> Result<String, Error> {
+    let mut response = String::new();
+    io::stdin().read_line(&mut response)?;
+    Ok(response)
+}
+
+pub fn concat_paths(p1: &str, p2: &str) -> String {
+    format!("{}{}/", p1, p2)
 }
 
 pub fn overwrite_dir(path: &Path) -> Result<(), Error> {

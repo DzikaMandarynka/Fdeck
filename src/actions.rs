@@ -1,13 +1,12 @@
 use std::{
     fs::{self},
-    io::{self},
-    path::Path,
+    path::{Path, PathBuf},
     result,
 };
 
 use crate::{
     errors::ActionError,
-    io_utility::{self, create_save, is_save_present},
+    io_utility::{self},
     paths,
 };
 
@@ -34,37 +33,35 @@ actions:
 }
 
 pub fn add_group(group_name: Option<&String>) -> Result<()> {
-    let group_created: bool;
+    let save_path: PathBuf = paths::get_save_path();
+
     let group_name = group_name.ok_or(ActionError::missing_param())?;
 
-    if !is_save_present() {
-        create_save().map_err(|e| ActionError::create_dir(&paths::get_save_path(), e))?;
+    if !io_utility::is_save_present() {
+        io_utility::create_save().map_err(|e| ActionError::create_dir(&save_path.clone(), e))?;
     }
 
-    let dir_path = format!("{}{}", paths::get_save_path(), group_name);
+    let dir_path = save_path.join(group_name);
 
-    if Path::new(&dir_path).exists() {
+    let group_created = if dir_path.exists() {
         println!(
             "WARNING {} is already present, do you want to overwrite it [y/n]?",
             group_name
         );
 
-        let mut response = String::new();
-        io::stdin()
-            .read_line(&mut response)
-            .map_err(|e| ActionError::read_input(e))?;
+        let response = io_utility::request_input().map_err(|e| ActionError::read_input(e))?;
 
         if response.trim().to_lowercase() == "y" {
             io_utility::overwrite_dir(Path::new(&dir_path))
-                .map_err(|e| ActionError::overwrite_dir(group_name, e))?;
-            group_created = true;
+                .map_err(|e| ActionError::overwrite_dir(&dir_path, e))?;
+            true
         } else {
-            group_created = false
+            false
         }
     } else {
-        fs::create_dir(&dir_path).map_err(|e| ActionError::create_dir(group_name, e))?;
-        group_created = true;
-    }
+        fs::create_dir(&dir_path).map_err(|e| ActionError::create_dir(&dir_path, e))?;
+        true
+    };
 
     if group_created {
         println!("Successfully created group: {}", group_name);

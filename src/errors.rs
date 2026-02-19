@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::{error::Error, fmt::Display, io};
 type IOError = io::Error;
 
@@ -5,10 +6,11 @@ type IOError = io::Error;
 pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
+    InvalidGroup,
     ReadInput(IOError),
-    OpenFile(String, IOError),
-    CreateDirectory(String, IOError),
-    OverwriteDirectory(String, IOError),
+    OpenFile(PathBuf, IOError),
+    CreateDirectory(PathBuf, IOError),
+    OverwriteDirectory(PathBuf, IOError),
 }
 
 #[derive(Debug)]
@@ -35,24 +37,29 @@ impl ActionError {
             kind: ActionErrorKind::MissingParams,
         }
     }
+    pub fn invalid_group() -> Self {
+        ActionError {
+            kind: ActionErrorKind::InvalidGroup,
+        }
+    }
     pub fn read_input(io_err: IOError) -> Self {
         ActionError {
             kind: ActionErrorKind::ReadInput(io_err),
         }
     }
-    pub fn file_read(file_name: &str, io_err: IOError) -> Self {
+    pub fn file_read(file_name: &PathBuf, io_err: IOError) -> Self {
         ActionError {
-            kind: ActionErrorKind::OpenFile(file_name.to_string(), io_err),
+            kind: ActionErrorKind::OpenFile(file_name.clone(), io_err),
         }
     }
-    pub fn create_dir(dir_name: &str, io_err: IOError) -> Self {
+    pub fn create_dir(dir: &PathBuf, io_err: IOError) -> Self {
         ActionError {
-            kind: ActionErrorKind::CreateDirectory(dir_name.to_string(), io_err),
+            kind: ActionErrorKind::CreateDirectory(dir.clone(), io_err),
         }
     }
-    pub fn overwrite_dir(dir_name: &str, io_err: IOError) -> Self {
+    pub fn overwrite_dir(dir_name: &PathBuf, io_err: IOError) -> Self {
         ActionError {
-            kind: ActionErrorKind::OverwriteDirectory(dir_name.to_string(), io_err),
+            kind: ActionErrorKind::OverwriteDirectory(dir_name.clone(), io_err),
         }
     }
     pub fn kind(&self) -> &ActionErrorKind {
