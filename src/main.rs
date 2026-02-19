@@ -64,6 +64,8 @@ fn main() {
             },
         };
         eprintln!("Error: {e}");
+    } else {
+        println!("Operation completed successfully")
     }
 }
 
