@@ -19,10 +19,6 @@ pub fn request_input() -> Result<String, Error> {
     Ok(response)
 }
 
-pub fn concat_paths(p1: &str, p2: &str) -> String {
-    format!("{}{}/", p1, p2)
-}
-
 pub fn overwrite_dir(path: &Path) -> Result<(), Error> {
     if path.exists() {
         fs::remove_dir_all(path)?;
