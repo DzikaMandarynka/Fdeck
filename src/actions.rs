@@ -44,29 +44,24 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
 
     let dir_path = save_path.join(group_name);
 
-    let group_created = if dir_path.exists() {
+    if dir_path.exists() {
         println!(
-            "WARNING {} is already present, do you want to overwrite it [y/n]?",
+            "group {} is already present, do you wish to overwrite it [y/n]?",
             group_name
         );
 
-        let response = io_utility::request_input().map_err(|e| ActionError::read_input(e))?;
+        let response = io_utility::request_input()
+            .map_err(|e| ActionError::read_input(e))?
+            .trim()
+            .to_lowercase();
 
-        if response.trim().to_lowercase() == "y" {
+        if response == "y" {
             io_utility::overwrite_dir(Path::new(&dir_path))
                 .map_err(|e| ActionError::overwrite_dir(&dir_path, e))?;
-            true
-        } else {
-            false
         }
     } else {
         fs::create_dir(&dir_path).map_err(|e| ActionError::create_dir(&dir_path, e))?;
-        true
     };
-
-    if group_created {
-        println!("Successfully created group: {}", group_name);
-    }
 
     Ok(())
 }
@@ -89,11 +84,8 @@ pub fn add_card(
     let card_question = card_question.ok_or(ActionError::missing_param())?;
     let card_answer = card_answer.ok_or(ActionError::missing_param())?;
     let card_group = card_group.ok_or(ActionError::missing_param())?;
-
-    if !io_utility::is_save_present() {
-        io_utility::create_save().map_err(|e| ActionError::create_dir(&save_path, e))?;
-    }
     let group_path = save_path.join(card_group);
+
     if !group_path.exists() {
         Err(ActionError::invalid_group())
     } else {
@@ -118,7 +110,6 @@ pub fn add_card(
 
         file.write_all(format!("{},{},{}", &card_name, card_question, card_answer).as_bytes())
             .map_err(|e| ActionError::write_file(&card_path, e))?;
-        println!("card created at {:?}", card_path);
 
         Ok(())
     }
