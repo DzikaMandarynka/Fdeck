@@ -1,5 +1,5 @@
 use fdesk::actions;
-use fdesk::errors::{ActionError, ActionErrorKind};
+use fdesk::errors::{ActionError, ActionErrorKind, FileSystemCause};
 use std::env;
 
 fn main() {
@@ -36,18 +36,28 @@ fn main() {
             ActionErrorKind::ReadInput(io_err) => {
                 &format!("Couldn't read user input because [io error: {}]", io_err)
             }
-            ActionErrorKind::OpenFile(path, io_err) => &format!(
-                "Couldn't open a file [file: {:?}] because [io error: {}]",
-                path, io_err
-            ),
-            ActionErrorKind::CreateDirectory(path, io_err) => &format!(
-                "Couldn't create a directory [dir: {:?}] because [io error: {}]",
-                path, io_err
-            ),
-            ActionErrorKind::OverwriteDirectory(path, io_err) => &format!(
-                "Couldn't overwrite a directory [dir: {:?}] because [io error: {}]",
-                path, io_err
-            ),
+            ActionErrorKind::FileSystem(cause, path, io_err) => match cause {
+                FileSystemCause::CreateFile => &format!(
+                    "Couldn't create a file [file: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
+                FileSystemCause::OpenFile => &format!(
+                    "Couldn't open a file [file: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
+                FileSystemCause::WriteFile => &format!(
+                    "Couldn't write to a file [file: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
+                FileSystemCause::CreateDirectory => &format!(
+                    "Couldn't create a directory [dir: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
+                FileSystemCause::OverwriteDirectory => &format!(
+                    "Couldn't overwrite a directory [dir: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
+            },
         };
         eprintln!("Error: {e}");
     }
