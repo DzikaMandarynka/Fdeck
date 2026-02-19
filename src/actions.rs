@@ -1,5 +1,6 @@
 use std::{
-    fs::{self},
+    fs::{self, File},
+    io::Write,
     path::{Path, PathBuf},
     result,
 };
@@ -73,4 +74,52 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
 pub fn unknown_action(action_name: &str) {
     println!("Unknown action [action: {}]", action_name);
     help();
+}
+
+pub fn add_card(
+    card_name: Option<&String>,
+    card_question: Option<&String>,
+    card_answer: Option<&String>,
+    card_group: Option<&String>,
+) -> Result<()> {
+    let save_path = paths::get_save_path();
+
+    let card_name = card_name.ok_or(ActionError::missing_param())?;
+    let card_name = format!("{}.deck", card_name);
+    let card_question = card_question.ok_or(ActionError::missing_param())?;
+    let card_answer = card_answer.ok_or(ActionError::missing_param())?;
+    let card_group = card_group.ok_or(ActionError::missing_param())?;
+
+    if !io_utility::is_save_present() {
+        io_utility::create_save().map_err(|e| ActionError::create_dir(&save_path, e))?;
+    }
+    let group_path = save_path.join(card_group);
+    if !group_path.exists() {
+        Err(ActionError::invalid_group())
+    } else {
+        let card_path = group_path.join(&card_name);
+        if card_path.exists() {
+            println!(
+                "Card \"{}\" already exists in group \"{}\", do you wish to overwrite it? [y/n]",
+                card_name, card_group
+            );
+            let response = io_utility::request_input()
+                .map_err(|e| ActionError::read_input(e))?
+                .trim()
+                .to_lowercase();
+            if response == "y" {
+                fs::remove_file(&card_path).map_err(|e| ActionError::remove_file(&card_path, e))?;
+            } else {
+                return Ok(());
+            }
+        }
+        let mut file =
+            File::create_new(&card_path).map_err(|e| ActionError::create_file(&card_path, e))?;
+
+        file.write_all(format!("{},{},{}", &card_name, card_question, card_answer).as_bytes())
+            .map_err(|e| ActionError::write_file(&card_path, e))?;
+        println!("card created at {:?}", card_path);
+
+        Ok(())
+    }
 }

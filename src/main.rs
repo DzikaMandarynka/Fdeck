@@ -37,6 +37,10 @@ fn main() {
                 &format!("Couldn't read user input because [io error: {}]", io_err)
             }
             ActionErrorKind::FileSystem(cause, path, io_err) => match cause {
+                FileSystemCause::RemoveFile => &format!(
+                    "Couldn't remove a file [file: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
                 FileSystemCause::CreateFile => &format!(
                     "Couldn't create a file [file: {:?}] because [io error: {}]",
                     path, io_err

@@ -4,6 +4,7 @@ type IOError = io::Error;
 
 #[derive(Debug)]
 pub enum FileSystemCause {
+    RemoveFile,
     CreateFile,
     OpenFile,
     WriteFile,
@@ -61,6 +62,10 @@ impl ActionError {
         ActionError {
             kind: ActionErrorKind::FileSystem(cause, path.clone(), source),
         }
+    }
+
+    pub fn remove_file(path: &PathBuf, err: IOError) -> Self {
+        Self::file_system(FileSystemCause::RemoveFile, path, err)
     }
 
     pub fn create_file(path: &PathBuf, err: IOError) -> Self {
