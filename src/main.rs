@@ -53,6 +53,10 @@ fn main() {
                     "Couldn't write to a file [file: {:?}] because [io error: {}]",
                     path, io_err
                 ),
+                FileSystemCause::ReadFile => &format!(
+                    "Couldn't read a file [file: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
                 FileSystemCause::CreateDirectory => &format!(
                     "Couldn't create a directory [dir: {:?}] because [io error: {}]",
                     path, io_err

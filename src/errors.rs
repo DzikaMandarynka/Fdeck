@@ -8,6 +8,7 @@ pub enum FileSystemCause {
     CreateFile,
     OpenFile,
     WriteFile,
+    ReadFile,
     CreateDirectory,
     OverwriteDirectory,
 }
@@ -78,6 +79,10 @@ impl ActionError {
 
     pub fn write_file(path: &PathBuf, err: IOError) -> Self {
         Self::file_system(FileSystemCause::WriteFile, path, err)
+    }
+
+    pub fn read_file(path: &PathBuf, err: IOError) -> Self {
+        Self::file_system(FileSystemCause::ReadFile, path, err)
     }
 
     pub fn create_dir(path: &PathBuf, err: IOError) -> Self {
