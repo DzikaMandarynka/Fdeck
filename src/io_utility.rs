@@ -1,4 +1,6 @@
 use crate::paths;
+use std::path::PathBuf;
+
 use std::{
     fs,
     io::{self, Error},
@@ -24,4 +26,16 @@ pub fn overwrite_dir(path: &Path) -> Result<(), Error> {
         fs::remove_dir_all(path)?;
     }
     fs::create_dir(path)
+}
+
+pub fn get_files(path: &Path) -> Result<Vec<PathBuf>, Error> {
+    let mut vec = Vec::new();
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let entry_path = entry.path();
+        if entry_path.is_file() {
+            vec.push(entry_path);
+        }
+    }
+    Ok(vec)
 }
