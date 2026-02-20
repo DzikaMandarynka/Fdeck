@@ -1,4 +1,5 @@
 use crate::paths;
+use std::os::unix::fs::FileExt;
 use std::path::PathBuf;
 
 use std::{
@@ -21,14 +22,14 @@ pub fn request_input() -> Result<String, Error> {
     Ok(response)
 }
 
-pub fn overwrite_dir(path: &Path) -> Result<(), Error> {
-    if path.exists() {
+pub fn overwrite_dir<P: AsRef<Path> + ?Sized>(path: &P) -> Result<(), Error> {
+    if path.as_ref().exists() {
         fs::remove_dir_all(path)?;
     }
     fs::create_dir(path)
 }
 
-pub fn get_files(path: &Path) -> Result<Vec<PathBuf>, Error> {
+pub fn get_files<P: AsRef<Path>>(path: &P) -> Result<Vec<PathBuf>, Error> {
     let mut vec = Vec::new();
     for entry in fs::read_dir(path)? {
         let entry = entry?;
