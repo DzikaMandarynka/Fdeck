@@ -80,7 +80,6 @@ pub fn add_card(
     let save_path = paths::get_save_path();
 
     let card_name = card_name.ok_or(ActionError::missing_param())?;
-    let card_name = format!("{}.deck", card_name);
     let card_question = card_question.ok_or(ActionError::missing_param())?;
     let card_answer = card_answer.ok_or(ActionError::missing_param())?;
     let card_group = card_group.ok_or(ActionError::missing_param())?;
@@ -89,7 +88,7 @@ pub fn add_card(
     if !group_path.exists() {
         Err(ActionError::invalid_group())
     } else {
-        let card_path = group_path.join(&card_name);
+        let card_path = group_path.join(&format!("{}.deck", card_name));
         if card_path.exists() {
             println!(
                 "Card \"{}\" already exists in group \"{}\", do you wish to overwrite it? [y/n]",
