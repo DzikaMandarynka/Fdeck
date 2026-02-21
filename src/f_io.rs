@@ -46,3 +46,15 @@ pub fn get_files(path: &PathBuf) -> Result<Vec<PathBuf>> {
     }
     Ok(vec)
 }
+
+pub fn create_dir(path: &PathBuf) -> Result<()> {
+    fs::create_dir(path).map_err(|e| ActionError::create_dir(path, e))
+}
+
+pub fn read_file_to_string(path: &PathBuf) -> Result<String> {
+    fs::read_to_string(path).map_err(|e| ActionError::read_file(path, e))
+}
+
+pub fn remove_file(path: &PathBuf) -> Result<()> {
+    fs::remove_file(path).map_err(|e| ActionError::remove_file(path, e))
+}

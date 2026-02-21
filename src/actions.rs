@@ -1,9 +1,4 @@
-use std::{
-    fs::{self, File},
-    io::Write,
-    path::PathBuf,
-    result,
-};
+use std::{fs::File, io::Write, path::PathBuf, result};
 
 use crate::{
     errors::ActionError,
@@ -56,7 +51,7 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
             f_io::overwrite_dir(&dir_path)?
         }
     } else {
-        fs::create_dir(&dir_path).map_err(|e| ActionError::create_dir(&dir_path, e))?;
+        f_io::create_dir(&dir_path)?;
     };
 
     Ok(())
@@ -92,7 +87,7 @@ pub fn add_card(
             );
             let response = f_io::request_input()?.trim().to_lowercase();
             if response == "y" {
-                fs::remove_file(&card_path).map_err(|e| ActionError::remove_file(&card_path, e))?;
+                f_io::remove_file(&card_path)?;
             } else {
                 return Ok(());
             }
@@ -118,8 +113,7 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
     } else {
         let files = f_io::get_files(&group_path)?;
         for file in files {
-            let content =
-                fs::read_to_string(file).map_err(|e| ActionError::read_file(&group_path, e))?;
+            let content = f_io::read_file_to_string(&file)?;
             let content = content.split(',');
 
             let mut values = Vec::new();
