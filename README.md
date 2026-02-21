@@ -2,7 +2,7 @@
 a small CLI flashcard app built with Rust with no dependencies
 
 # Compilation
-compile using `cargo build`, if you don't have cargo, you will need to install rust on your system
+compile using `cargo build --release`, if you don't have cargo, you will need to install rust on your system
 
 # Commands
 `fdeck help` -> displays help screen <br>

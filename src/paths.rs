@@ -5,5 +5,5 @@ pub fn get_save_path() -> PathBuf {
 }
 #[cfg(not(debug_assertions))]
 pub fn get_save_path() -> PathBuf {
-    PathBuf(format!("{}/{}", env!("HOME"), ".fdeck/"))
+    PathBuf::from(format!("{}/{}", env!("HOME"), ".fdeck/"))
 }
