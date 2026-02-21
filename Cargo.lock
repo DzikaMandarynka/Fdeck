@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "fdesk"
+name = "fdeck"
 version = "0.1.0"

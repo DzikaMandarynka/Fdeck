@@ -1,5 +1,5 @@
-use fdesk::actions;
-use fdesk::errors::{ActionError, ActionErrorKind, FileSystemCause};
+use fdeck::actions;
+use fdeck::errors::{ActionError, ActionErrorKind, FileSystemCause};
 use std::env;
 
 fn main() {
@@ -23,7 +23,7 @@ fn main() {
 
     #[cfg(debug_assertions)]
     {
-        use fdesk::paths;
+        use fdeck::paths;
         println!("Save directory: {:?}", paths::get_save_path());
         println!("Input action: {}", action);
     }
