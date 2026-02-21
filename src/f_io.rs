@@ -24,7 +24,7 @@ pub fn request_input() -> Result<String> {
     let mut response = String::new();
     io::stdin()
         .read_line(&mut response)
-        .map_err(|e| ActionError::read_input(e));
+        .map_err(|e| ActionError::read_input(e))?;
     Ok(response)
 }
 
