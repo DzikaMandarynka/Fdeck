@@ -1,6 +1,6 @@
 use std::{
     fs::{self, File},
-    io::Write,
+    io::{self, Write},
     path::{Path, PathBuf},
     result,
 };
@@ -110,6 +110,57 @@ pub fn add_card(
         file.write_all(format!("{},{},{}", &card_name, card_question, card_answer).as_bytes())
             .map_err(|e| ActionError::write_file(&card_path, e))?;
 
+        Ok(())
+    }
+}
+
+pub fn review(group_name: Option<&String>) -> Result<()> {
+    let save_path: PathBuf = paths::get_save_path();
+
+    let group_name = group_name.ok_or(ActionError::missing_param())?;
+    let group_path = save_path.join(group_name);
+
+    if !group_path.exists() {
+        Err(ActionError::invalid_group())
+    } else {
+        let files = io_utility::get_files(&group_path)
+            .map_err(|e| ActionError::read_file(&group_path, e))?;
+        for file in files {
+            let content =
+                fs::read_to_string(file).map_err(|e| ActionError::read_file(&group_path, e))?;
+            let content = content.split(',');
+
+            let mut values = Vec::new();
+
+            for value in content {
+                values.push(value);
+            }
+
+            let card_name = values[0];
+            let card_question = values[1];
+            let card_answer = values[2];
+
+            println!("card: {}\nquestion: {}", card_name, card_question);
+            let user_answer = io_utility::request_input()
+                .map_err(|e| ActionError::read_input(e))?
+                .trim()
+                .to_lowercase();
+
+            if !(user_answer == card_answer.to_lowercase()) {
+                println!("Your answer: {}\nCard answer: {}", user_answer, card_answer);
+                println!("Where you correct? [y/n]");
+                let user_answer = io_utility::request_input()
+                    .map_err(|e| ActionError::read_input(e))?
+                    .trim()
+                    .to_lowercase();
+
+                if user_answer == "y" {
+                    println!("Good job!")
+                }
+            } else {
+                println!("Your answer was correct, it was {}", card_answer);
+            }
+        }
         Ok(())
     }
 }

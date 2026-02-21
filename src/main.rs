@@ -84,6 +84,7 @@ fn exec_action(
         "help" => actions::help(),
         "add_group" => actions::add_group(param1)?,
         "add_card" => actions::add_card(param1, param2, param3, param4)?,
+        "review" => actions::review(param1)?,
         _ => actions::unknown_action(action),
     }
     Ok(())
