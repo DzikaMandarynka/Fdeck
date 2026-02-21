@@ -13,9 +13,10 @@ pub fn help() {
         "
 [flash-deck]
 syntax:
-    f-deck <action> [params]
+    f-deck [flags] <action> <action_param_1> .. <action_param_n>
     <> -> needed
     [] -> optional
+    (NOTE: for now this app has no flags)
 actions:
     help: display this screen
     add_card: add a flash card
