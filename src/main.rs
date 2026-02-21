@@ -33,6 +33,10 @@ fn main() {
             ActionErrorKind::InvalidParams => "Invalid Parameters were inputed into an action",
             ActionErrorKind::MissingParams => "Some essential parameters were missing",
             ActionErrorKind::InvalidGroup => "Specified group doesn't exist",
+            ActionErrorKind::DirEntry(io_err) => &format!(
+                "Couldn't read directory entry because [io error: {}]",
+                io_err
+            ),
             ActionErrorKind::ReadInput(io_err) => {
                 &format!("Couldn't read user input because [io error: {}]", io_err)
             }
@@ -57,12 +61,16 @@ fn main() {
                     "Couldn't read a file [file: {:?}] because [io error: {}]",
                     path, io_err
                 ),
+                FileSystemCause::ReadDirectory => &format!(
+                    "Couldn't read a directory [dir: {:?}] because [io error: {}]",
+                    path, io_err
+                ),
                 FileSystemCause::CreateDirectory => &format!(
                     "Couldn't create a directory [dir: {:?}] because [io error: {}]",
                     path, io_err
                 ),
-                FileSystemCause::OverwriteDirectory => &format!(
-                    "Couldn't overwrite a directory [dir: {:?}] because [io error: {}]",
+                FileSystemCause::RemoveDirectory => &format!(
+                    "Couldn't remove a directory [dir: {:?}] because [io error: {}]",
                     path, io_err
                 ),
             },

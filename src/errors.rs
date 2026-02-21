@@ -9,14 +9,16 @@ pub enum FileSystemCause {
     OpenFile,
     WriteFile,
     ReadFile,
+    ReadDirectory,
     CreateDirectory,
-    OverwriteDirectory,
+    RemoveDirectory,
 }
 #[derive(Debug)]
 pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
     InvalidGroup,
+    DirEntry(IOError),
     ReadInput(IOError),
     FileSystem(FileSystemCause, PathBuf, IOError),
 }
@@ -53,6 +55,12 @@ impl ActionError {
         }
     }
 
+    pub fn dir_entry(io_err: IOError) -> Self {
+        ActionError {
+            kind: ActionErrorKind::DirEntry(io_err),
+        }
+    }
+
     pub fn read_input(io_err: IOError) -> Self {
         ActionError {
             kind: ActionErrorKind::ReadInput(io_err),
@@ -85,12 +93,16 @@ impl ActionError {
         Self::file_system(FileSystemCause::ReadFile, path, err)
     }
 
+    pub fn read_dir(path: &PathBuf, err: IOError) -> Self {
+        Self::file_system(FileSystemCause::ReadDirectory, path, err)
+    }
+
     pub fn create_dir(path: &PathBuf, err: IOError) -> Self {
         Self::file_system(FileSystemCause::CreateDirectory, path, err)
     }
 
-    pub fn overwrite_dir(path: &PathBuf, err: IOError) -> Self {
-        Self::file_system(FileSystemCause::OverwriteDirectory, path, err)
+    pub fn remove_dir(path: &PathBuf, err: IOError) -> Self {
+        Self::file_system(FileSystemCause::RemoveDirectory, path, err)
     }
 
     pub fn kind(&self) -> &ActionErrorKind {

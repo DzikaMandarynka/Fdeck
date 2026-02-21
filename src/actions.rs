@@ -39,7 +39,7 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
     let group_name = group_name.ok_or(ActionError::missing_param())?;
 
     if !io_utility::is_save_present() {
-        io_utility::create_save().map_err(|e| ActionError::create_dir(&save_path.clone(), e))?;
+        io_utility::create_save()?;
     }
 
     let dir_path = save_path.join(group_name);
@@ -50,14 +50,10 @@ pub fn add_group(group_name: Option<&String>) -> Result<()> {
             group_name
         );
 
-        let response = io_utility::request_input()
-            .map_err(|e| ActionError::read_input(e))?
-            .trim()
-            .to_lowercase();
+        let response = io_utility::request_input()?.trim().to_lowercase();
 
         if response == "y" {
-            io_utility::overwrite_dir(Path::new(&dir_path))
-                .map_err(|e| ActionError::overwrite_dir(&dir_path, e))?;
+            io_utility::overwrite_dir(&dir_path)?
         }
     } else {
         fs::create_dir(&dir_path).map_err(|e| ActionError::create_dir(&dir_path, e))?;
@@ -94,10 +90,7 @@ pub fn add_card(
                 "Card \"{}\" already exists in group \"{}\", do you wish to overwrite it? [y/n]",
                 card_name, card_group
             );
-            let response = io_utility::request_input()
-                .map_err(|e| ActionError::read_input(e))?
-                .trim()
-                .to_lowercase();
+            let response = io_utility::request_input()?.trim().to_lowercase();
             if response == "y" {
                 fs::remove_file(&card_path).map_err(|e| ActionError::remove_file(&card_path, e))?;
             } else {
@@ -123,8 +116,7 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
     if !group_path.exists() {
         Err(ActionError::invalid_group())
     } else {
-        let files = io_utility::get_files(&group_path)
-            .map_err(|e| ActionError::read_file(&group_path, e))?;
+        let files = io_utility::get_files(&group_path)?;
         for file in files {
             let content =
                 fs::read_to_string(file).map_err(|e| ActionError::read_file(&group_path, e))?;
@@ -141,18 +133,12 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
             let card_answer = values[2];
 
             println!("card: {}\nquestion: {}", card_name, card_question);
-            let user_answer = io_utility::request_input()
-                .map_err(|e| ActionError::read_input(e))?
-                .trim()
-                .to_lowercase();
+            let user_answer = io_utility::request_input()?.trim().to_lowercase();
 
             if !(user_answer == card_answer.to_lowercase()) {
                 println!("Your answer: {}\nCard answer: {}", user_answer, card_answer);
                 println!("Where you correct? [y/n]");
-                let user_answer = io_utility::request_input()
-                    .map_err(|e| ActionError::read_input(e))?
-                    .trim()
-                    .to_lowercase();
+                let user_answer = io_utility::request_input()?.trim().to_lowercase();
 
                 if user_answer == "y" {
                     println!("Good job!")
