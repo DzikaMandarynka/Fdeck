@@ -112,6 +112,8 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
     if !group_path.exists() {
         Err(ActionError::invalid_group())
     } else {
+        let mut correct_counter = 0;
+        let mut incorrect_counter = 0;
         let files = f_io::get_files(&group_path)?;
         for file in files {
             let content = f_io::read_file_to_string(&file)?;
@@ -133,15 +135,25 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
             if !(user_answer == card_answer.to_lowercase()) {
                 println!("Your answer: {}\nCard answer: {}", user_answer, card_answer);
                 println!("Where you correct? [y/n]");
+
                 let user_answer = f_io::request_input()?.trim().to_lowercase();
 
                 if user_answer == "y" {
+                    correct_counter += 1;
                     println!("Good job!")
+                } else {
+                    incorrect_counter += 1;
                 }
             } else {
                 println!("Your answer was correct, it was {}", card_answer);
+                correct_counter += 1;
             }
         }
+        println!(
+            "Correct answers: {} \nIncorrect answers: {}",
+            correct_counter, incorrect_counter
+        );
+
         Ok(())
     }
 }
