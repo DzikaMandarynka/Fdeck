@@ -127,9 +127,18 @@ pub fn review(group_name: Option<&String>) -> Result<()> {
             values.push(value);
         }
 
-        let card_name = values[0];
-        let card_question = values[1];
-        let card_answer = values[2];
+        let card_name = values.get(0).ok_or(ActionError::missing_values(
+            &file,
+            "card_name was missing".to_string(),
+        ))?;
+        let card_question = values.get(1).ok_or(ActionError::missing_values(
+            &file,
+            "card_question was missing".to_string(),
+        ))?;
+        let card_answer = values.get(2).ok_or(ActionError::missing_values(
+            &file,
+            "card_answer was missing".to_string(),
+        ))?;
 
         println!("card: {}\nquestion: {}\n", card_name, card_question);
         let user_answer = f_io::request_input()?.trim().to_lowercase();

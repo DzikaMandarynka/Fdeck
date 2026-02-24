@@ -18,6 +18,7 @@ pub enum ActionErrorKind {
     InvalidParams,
     MissingParams,
     InvalidGroup,
+    MissingValues(PathBuf, String),
     DirEntry(IOError),
     ReadInput(IOError),
     FileSystem(FileSystemCause, PathBuf, IOError),
@@ -52,6 +53,12 @@ impl ActionError {
     pub fn invalid_group() -> Self {
         ActionError {
             kind: ActionErrorKind::InvalidGroup,
+        }
+    }
+
+    pub fn missing_values(path: &PathBuf, msg: String) -> Self {
+        ActionError {
+            kind: ActionErrorKind::MissingValues(path.clone(), msg),
         }
     }
 

@@ -33,6 +33,7 @@ fn main() {
             ActionErrorKind::InvalidParams => "Invalid Parameters were inputed into an action",
             ActionErrorKind::MissingParams => "Some essential parameters were missing",
             ActionErrorKind::InvalidGroup => "Specified group doesn't exist",
+            ActionErrorKind::MissingValues(path, msg) => &format!("{}, from {:?}", msg, path),
             ActionErrorKind::DirEntry(io_err) => &format!(
                 "Couldn't read directory entry because [io error: {}]",
                 io_err
